@@ -5,14 +5,29 @@ from django.db.models import QuerySet
 User = get_user_model()
 
 
+class Contact(models.Model):
+    user = models.ForeignKey(to=User, related_name='friends', on_delete=models.CASCADE)
+    friends = models.ManyToManyField('self', blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
 class Message(models.Model):
-    author = models.ForeignKey(User, related_name='author_msgs', on_delete=models.CASCADE)
+    contact = models.ForeignKey(to=Contact, related_name='messages', on_delete=models.CASCADE, default=None)
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return self.author.username
+        return self.contact.user.username
 
-    @classmethod
-    def last_10_messages(cls) -> QuerySet:
-        return cls.objects.order_by('-created_at').all()[:10]
+
+class Chat(models.Model):
+    participants = models.ManyToManyField(Contact, related_name='chat')
+    messages = models.ManyToManyField(Message, blank=True)
+
+    def last_10_messages(self) -> QuerySet:
+        return self.messages.objects.order_by('-timestamp').all()[:10]
+
+    def __str__(self):
+        return str(self.pk)
