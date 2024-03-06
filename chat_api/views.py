@@ -1,12 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions
-from rest_framework.generics import (
-    ListAPIView,
-    RetrieveAPIView,
-    CreateAPIView,
-    DestroyAPIView,
-    UpdateAPIView
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
+
 from chat.models import Chat
 from chat.services.chat_logic import get_user_contact
 from chat_api.serializers import ChatModelSerializer
